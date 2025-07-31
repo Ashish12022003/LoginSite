@@ -13,13 +13,15 @@ public class LoginAction extends Action {
 
         try {
             Connection conn = DBConnection.getConnection();
-            CallableStatement stmt = conn.prepareCall("{CALL check_login(?, ?, ?)}");
+            CallableStatement stmt = conn.prepareCall("{CALL check_login(?, ?, ?, ?, ?)}");
             stmt.setString(1, loginForm.getUsername());
             stmt.setString(2, loginForm.getPassword());
-            stmt.registerOutParameter(3, Types.INTEGER);
+            stmt.setString(3, loginForm.getEmail());
+            stmt.setString(4, loginForm.getRole());
+            stmt.registerOutParameter(5, Types.INTEGER);
             stmt.execute();
 
-            int result = stmt.getInt(3);
+            int result = stmt.getInt(5);
             isValid = (result == 1);
 
             stmt.close();
