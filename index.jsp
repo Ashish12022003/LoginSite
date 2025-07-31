@@ -6,6 +6,8 @@
     <html:form action="/login">
         Username: <html:text property="username" /><br/>
         Password: <html:password property="password" /><br/>
+        Email: <html:text property="email" /><br/>
+        Role: <html:text property="role" /><br/>
         <html:submit value="Login"/>
     </html:form>
 </body>
