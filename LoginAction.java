@@ -7,25 +7,30 @@ import org.apache.struts.action.*;
 public class LoginAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
         HttpServletRequest request, HttpServletResponse response) {
-        
+
         LoginForm loginForm = (LoginForm) form;
         boolean isValid = false;
 
         try {
             Connection conn = DBConnection.getConnection();
-            CallableStatement stmt = conn.prepareCall("{CALL check_login(?, ?, ?, ?, ?)}");
-            stmt.setString(1, loginForm.getUsername());
-            stmt.setString(2, loginForm.getPassword());
-            stmt.setString(3, loginForm.getEmail());
-            stmt.setString(4, loginForm.getRole());
-            stmt.registerOutParameter(5, Types.INTEGER);
-            stmt.execute();
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT * FROM users WHERE username = ? AND password = ? AND email = ? AND role = ?");
 
-            int result = stmt.getInt(5);
-            isValid = (result == 1);
+            ps.setString(1, loginForm.getUsername());
+            ps.setString(2, loginForm.getPassword());
+            ps.setString(3, loginForm.getEmail());
+            ps.setString(4, loginForm.getRole());
 
-            stmt.close();
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                isValid = true;
+            }
+
+            rs.close();
+            ps.close();
             conn.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
